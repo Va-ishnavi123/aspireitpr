@@ -1,0 +1,23 @@
+import axios from 'axios';
+
+export const loginUser = (credentials) => async (dispatch) => {
+  try {
+    const response = await axios.post('/login', credentials);
+    dispatch({ type: 'LOGIN_SUCCESS', payload: response.data });
+    localStorage.setItem('token', response.data.token);
+  } catch (err) {
+    dispatch({ type: 'LOGIN_FAILURE', payload: err.message });
+  }
+};
+
+export const fetchUserProfile = () => async (dispatch) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.get('/profile', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    dispatch({ type: 'FETCH_PROFILE_SUCCESS', payload: response.data });
+  } catch (err) {
+    dispatch({ type: 'FETCH_PROFILE_FAILURE', payload: err.message });
+  }
+};
